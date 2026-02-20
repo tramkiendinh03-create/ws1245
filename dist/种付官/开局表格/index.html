@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>开局身份录入</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family:
+          'Inter',
+          'Segoe UI',
+          'PingFang SC',
+          'Microsoft YaHei',
+          -apple-system,
+          sans-serif;
+        color: #ffe8f3;
+        background:
+          radial-gradient(circle at 20% 10%, rgba(220, 38, 127, 0.22), transparent 45%),
+          radial-gradient(circle at 80% 90%, rgba(168, 85, 247, 0.22), transparent 45%),
+          linear-gradient(145deg, #13000f 0%, #190015 45%, #1f0123 100%);
+      }
+
+      .page {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 18px 14px 24px;
+      }
+
+      .panel {
+        position: relative;
+        border-radius: 18px;
+        border: 1px solid rgba(251, 113, 133, 0.45);
+        background: rgba(20, 0, 24, 0.64);
+        box-shadow:
+          0 0 0 1px rgba(236, 72, 153, 0.24) inset,
+          0 10px 30px rgba(0, 0, 0, 0.48),
+          0 0 30px rgba(219, 39, 119, 0.24);
+        overflow: hidden;
+      }
+
+      .panel::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.03) 0,
+          rgba(255, 255, 255, 0.03) 1px,
+          transparent 3px,
+          transparent 7px
+        );
+        opacity: 0.45;
+      }
+
+      .panel::after {
+        content: '';
+        position: absolute;
+        right: -100px;
+        top: -100px;
+        width: 260px;
+        height: 260px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(244, 114, 182, 0.18), transparent 70%);
+        pointer-events: none;
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+        padding: 18px 16px 16px;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 0.07em;
+        color: #fbcfe8;
+        text-shadow:
+          0 0 9px rgba(236, 72, 153, 0.45),
+          0 0 26px rgba(217, 70, 239, 0.25);
+      }
+
+      .subtitle {
+        margin: 8px 0 12px;
+        color: #f9a8d4;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .sigil {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0 14px;
+        height: 78px;
+        border: 1px solid rgba(244, 114, 182, 0.32);
+        border-radius: 12px;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.22), transparent 55%),
+          linear-gradient(135deg, rgba(88, 28, 135, 0.24), rgba(127, 29, 29, 0.18));
+        color: #f9a8d4;
+        letter-spacing: 0.2em;
+        font-size: 12px;
+        text-transform: uppercase;
+        box-shadow:
+          inset 0 0 28px rgba(244, 114, 182, 0.16),
+          0 0 20px rgba(236, 72, 153, 0.16);
+      }
+
+      .sigil::before {
+        content: '✦  LUST CODE  ✦';
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .label {
+        font-size: 13px;
+        color: #fbcfe8;
+        letter-spacing: 0.04em;
+      }
+
+      .required {
+        color: #fb7185;
+        margin-left: 4px;
+      }
+
+      input,
+      textarea,
+      select,
+      button {
+        font: inherit;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid rgba(244, 114, 182, 0.45);
+        border-radius: 10px;
+        padding: 10px 11px;
+        color: #ffe4f0;
+        background: rgba(62, 3, 40, 0.55);
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: rgba(251, 113, 133, 0.95);
+        box-shadow:
+          0 0 0 1px rgba(251, 113, 133, 0.75),
+          0 0 14px rgba(251, 113, 133, 0.3);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        border: 1px solid rgba(236, 72, 153, 0.56);
+        border-radius: 999px;
+        color: #f9a8d4;
+        background: rgba(88, 5, 51, 0.54);
+        padding: 4px 11px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .chip:hover {
+        color: #ffe4f1;
+        border-color: rgba(251, 113, 133, 0.92);
+      }
+
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn {
+        border: 1px solid rgba(251, 113, 133, 0.72);
+        border-radius: 10px;
+        padding: 9px 14px;
+        color: #ffe4f1;
+        background: linear-gradient(135deg, rgba(190, 24, 93, 0.7), rgba(147, 51, 234, 0.62));
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .btn.secondary {
+        border-color: rgba(216, 180, 254, 0.58);
+        background: rgba(88, 28, 135, 0.4);
+      }
+
+      .status {
+        margin-top: 12px;
+        min-height: 24px;
+        font-size: 13px;
+      }
+
+      .status.ok {
+        color: #86efac;
+      }
+
+      .status.warn {
+        color: #fcd34d;
+      }
+
+      .status.err {
+        color: #fda4af;
+      }
+
+      .tips {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #fbcfe8;
+        opacity: 0.9;
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        color: #f9a8d4;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="panel">
+        <div class="content">
+          <h1 class="title">开局身份录入</h1>
+          <p class="subtitle">填写开局身份信息，一键开局。</p>
+
+          <div class="sigil"></div>
+
+          <div class="grid">
+            <label class="field">
+              <span class="label">姓名<span class="required">*</span></span>
+              <input id="name" placeholder="例如：雨宫 夜澪" />
+            </label>
+
+            <label class="field">
+              <span class="label">性别<span class="required">*</span></span>
+              <select id="gender">
+                <option value="">请选择</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="扶她">扶她</option>
+                <option value="男娘">男娘</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="label">身份标识<span class="required">*</span></span>
+              <textarea id="identity" placeholder="例如：成熟御姐女教师｜危险美艳黑帮夫人｜娇纵财阀千金"></textarea>
+            </label>
+
+            <div class="field">
+              <span class="label">身份标识示例（点击填入）</span>
+              <div class="chips">
+                <button class="chip" data-chip="成熟御姐女教师" type="button">成熟御姐女教师</button>
+                <button class="chip" data-chip="危险美艳黑帮夫人" type="button">危险美艳黑帮夫人</button>
+                <button class="chip" data-chip="娇纵财阀千金" type="button">娇纵财阀千金</button>
+                <button class="chip" data-chip="清冷病娇研究员" type="button">清冷病娇研究员</button>
+                <button class="chip" data-chip="温柔人妻邻居" type="button">温柔人妻邻居</button>
+              </div>
+            </div>
+
+            <label class="field">
+              <span class="label">额外设定（可选）</span>
+              <textarea id="extra" placeholder="例如：性格偏好、禁忌、互动节奏、剧情雷点、服装风格、口癖等"></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="send" type="button">一键开局</button>
+            <button class="btn secondary" id="copy" type="button">复制设定文本</button>
+            <button class="btn secondary" id="clear" type="button">清空表单</button>
+          </div>
+
+          <div id="status" class="status"></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const $name = document.getElementById('name');
+        const $gender = document.getElementById('gender');
+        const $identity = document.getElementById('identity');
+        const $extra = document.getElementById('extra');
+        const $send = document.getElementById('send');
+        const $copy = document.getElementById('copy');
+        const $clear = document.getElementById('clear');
+        const $status = document.getElementById('status');
+
+        function setStatus(text, type) {
+          $status.textContent = text || '';
+          $status.className = 'status ' + (type || '');
+        }
+
+        function buildPrompt() {
+          const name = ($name.value || '').trim();
+          const gender = ($gender.value || '').trim();
+          const identity = ($identity.value || '').trim();
+          const extra = ($extra.value || '').trim();
+
+          if (!name || !gender || !identity) {
+            return { ok: false, message: '请完整填写 姓名 / 性别 / 身份标识。' };
+          }
+
+          const lines = [
+            '【开局角色设定】',
+            `姓名：${name}`,
+            `性别：${gender}`,
+            `身份标识：${identity}`,
+            `额外设定：${extra || '无'}`,
+            '',
+            '请基于以上设定，生成一段适合作为当前聊天开局推进的第一幕内容。',
+            '要求：保持沉浸感、情绪张力、环境细节与人物行动感。',
+            '务必生成并补全“其它尚未填写的变量”，保证变量结构完整且数值、状态合理。'
+          ];
+
+          return { ok: true, text: lines.join('\n') };
+        }
+
+        async function copyText(text) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+            return;
+          }
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+
+        document.querySelectorAll('.chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const text = btn.getAttribute('data-chip') || '';
+            $identity.value = text;
+          });
+        });
+
+        $clear.addEventListener('click', () => {
+          $name.value = '';
+          $gender.value = '';
+          $identity.value = '';
+          $extra.value = '';
+          setStatus('已清空表单。', 'warn');
+        });
+
+        $copy.addEventListener('click', async () => {
+          const built = buildPrompt();
+          if (!built.ok) {
+            setStatus(built.message, 'err');
+            return;
+          }
+          try {
+            await copyText(built.text);
+            setStatus('设定文本已复制。', 'ok');
+          } catch (error) {
+            setStatus('复制失败：' + (error && error.message ? error.message : String(error)), 'err');
+          }
+        });
+
+        $send.addEventListener('click', async () => {
+          const built = buildPrompt();
+          if (!built.ok) {
+            setStatus(built.message, 'err');
+            return;
+          }
+
+          const hasGenerate = typeof globalThis.generate === 'function';
+          const hasCreate = typeof globalThis.createChatMessages === 'function';
+          const hasSet = typeof globalThis.setChatMessages === 'function';
+          const hasGetLast = typeof globalThis.getLastMessageId === 'function';
+
+          if (!hasGenerate) {
+            setStatus('未检测到 generate()，无法触发 AI 生成。', 'err');
+            return;
+          }
+          if (!hasCreate) {
+            setStatus('未检测到 createChatMessages()，无法先行显示发送内容。', 'err');
+            return;
+          }
+
+          setStatus('正在发送开局内容（你会立即看到消息）…', 'warn');
+          $send.disabled = true;
+
+          try {
+            const userPrompt = built.text;
+
+            await globalThis.createChatMessages(
+              [
+                { role: 'user', message: userPrompt },
+                { role: 'assistant', message: '（思考中…）' }
+              ],
+              { refresh: 'affected' }
+            );
+
+            const placeholderId = hasGetLast ? globalThis.getLastMessageId() : undefined;
+            setStatus('已发送，AI 正在思考…', 'warn');
+
+            const assistantReply = await globalThis.generate({
+              user_input: userPrompt,
+              should_silence: false
+            });
+
+            if (hasSet && typeof placeholderId === 'number') {
+              await globalThis.setChatMessages(
+                [{ message_id: placeholderId, message: assistantReply }],
+                { refresh: 'affected' }
+              );
+            } else {
+              await globalThis.createChatMessages([{ role: 'assistant', message: assistantReply }], { refresh: 'affected' });
+            }
+
+            setStatus('已代你发送，AI 回复已更新到楼层。', 'ok');
+          } catch (error) {
+            setStatus('发送或生成失败：' + (error && error.message ? error.message : String(error)), 'err');
+          } finally {
+            $send.disabled = false;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

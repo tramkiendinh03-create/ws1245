@@ -37,41 +37,12 @@ function parse_entry(script_file: string) {
   return { script: script_file };
 }
 
-function common_path(lhs: string, rhs: string) {
-  const lhs_parts = lhs.split(path.sep);
-  const rhs_parts = rhs.split(path.sep);
-  for (let i = 0; i < Math.min(lhs_parts.length, rhs_parts.length); i++) {
-    if (lhs_parts[i] !== rhs_parts[i]) {
-      return lhs_parts.slice(0, i).join(path.sep);
-    }
-  }
-  return lhs_parts.join(path.sep);
-}
-
 function glob_script_files() {
-  const results: string[] = [];
-
-  fs.globSync(`{示例,src}/**/index.{ts,tsx,js,jsx}`)
+  return fs
+    .globSync(`{示例,src}/**/index.{ts,tsx,js,jsx}`)
     .filter(
       file => process.env.CI !== 'true' || !fs.readFileSync(path.join(import.meta.dirname, file)).includes('@no-ci'),
-    )
-    .forEach(file => {
-      const file_dirname = path.dirname(file);
-      for (const [index, result] of results.entries()) {
-        const result_dirname = path.dirname(result);
-        const common = common_path(result_dirname, file_dirname);
-        if (common === result_dirname) {
-          return;
-        }
-        if (common === file_dirname) {
-          results.splice(index, 1, file);
-          return;
-        }
-      }
-      results.push(file);
-    });
-
-  return results;
+    );
 }
 
 const config: Config = {
@@ -218,7 +189,10 @@ function parse_configuration(entry: Entry): (_env: any, argv: any) => webpack.Co
       ),
       chunkFilename: `${script_filepath.name}.[contenthash].chunk.js`,
       asyncChunks: true,
-      clean: true,
+      // 多入口存在父子目录（如 `种付官` 与 `种付官/开局表格`）时，
+      // `clean: true` 会在后编译的父目录入口清空子目录产物。
+      // 关闭自动清理以保留同级构建结果。
+      clean: false,
       publicPath: '',
       library: {
         type: 'module',
