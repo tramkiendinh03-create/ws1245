@@ -146,7 +146,7 @@ function buildPrompt(): { ok: true; text: string } | { ok: false; message: strin
   }
 
   const lines = [
-    '【开局角色设定】',
+    '【开局种付官设定】',
     `姓名：${name}`,
     `性别：${gender}`,
     `身份标识：${identity}`,
@@ -154,7 +154,7 @@ function buildPrompt(): { ok: true; text: string } | { ok: false; message: strin
     '',
     '请基于以上设定，生成一段适合作为当前聊天开局推进的第一幕内容。',
     '要求：保持沉浸感、情绪张力、环境细节与人物行动感。',
-    '务必生成并补全“其它尚未填写的变量”，保证变量结构完整且数值、状态合理。',
+    '务必更新所有变量必要变量',
   ];
 
   return { ok: true, text: lines.join('\n') };
@@ -209,45 +209,31 @@ async function sendAndGenerate() {
     return;
   }
   if (typeof (globalThis as any).createChatMessages !== 'function') {
-    setNotice('未检测到 createChatMessages()，无法先行显示发送内容。', 'warn');
+    setNotice('未检测到 createChatMessages()，无法发送。', 'warn');
     return;
   }
 
   sending.value = true;
-  setNotice('正在发送开局内容（你会立即看到消息）…', 'warn');
+  setNotice('正在代你发送…', 'warn');
 
   try {
     const userPrompt = built.text;
-    await (globalThis as any).createChatMessages(
-      [
-        { role: 'user', message: userPrompt },
-        { role: 'assistant', message: '（思考中…）' },
-      ],
-      { refresh: 'affected' },
-    );
+    await (globalThis as any).createChatMessages([{ role: 'user', message: userPrompt }], {
+      refresh: 'affected',
+    });
 
-    const hasGetLast = typeof (globalThis as any).getLastMessageId === 'function';
-    const hasSet = typeof (globalThis as any).setChatMessages === 'function';
-    const placeholderId = hasGetLast ? (globalThis as any).getLastMessageId() : undefined;
-
-    setNotice('已发送，AI 正在思考…', 'warn');
+    setNotice('已发送，正在触发 AI 生成…', 'warn');
 
     const assistantReply = await (globalThis as any).generate({
       user_input: userPrompt,
-      should_silence: false,
+      should_silence: true,
     });
 
-    if (hasSet && typeof placeholderId === 'number') {
-      await (globalThis as any).setChatMessages([{ message_id: placeholderId, message: assistantReply }], {
-        refresh: 'affected',
-      });
-    } else {
-      await (globalThis as any).createChatMessages([{ role: 'assistant', message: assistantReply }], {
-        refresh: 'affected',
-      });
-    }
+    await (globalThis as any).createChatMessages([{ role: 'assistant', message: assistantReply }], {
+      refresh: 'affected',
+    });
 
-    setNotice('已代你发送，AI 回复已更新到楼层。', 'ok');
+    setNotice('已代你发送，AI 回复已生成。', 'ok');
   } catch (error) {
     setNotice(`发送或生成失败：${error instanceof Error ? error.message : String(error)}`, 'warn');
   } finally {
