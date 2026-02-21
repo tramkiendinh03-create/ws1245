@@ -1,7 +1,7 @@
 <template>
-  <div class="flex w-full items-center justify-center overflow-hidden p-1.5 font-sans sm:p-2 md:p-3">
+  <div class="flex w-full items-center justify-center p-1 font-sans sm:p-2 md:p-3">
     <div
-      class="relative flex aspect-[16/10] w-full max-w-[1260px] flex-col overflow-hidden rounded-[2rem] border-2 border-cyan-200/25 bg-[#040914] shadow-[0_26px_80px_rgba(0,0,0,0.8),0_0_0_1px_rgba(80,210,255,0.2),0_0_40px_rgba(60,150,255,0.2)] sm:rounded-[2.3rem] lg:rounded-[2.7rem]"
+      class="relative flex aspect-[9/16] w-full max-w-[1260px] flex-col overflow-hidden rounded-[1.4rem] border-2 border-cyan-200/25 bg-[#040914] shadow-[0_26px_80px_rgba(0,0,0,0.8),0_0_0_1px_rgba(80,210,255,0.2),0_0_40px_rgba(60,150,255,0.2)] sm:aspect-[4/5] sm:rounded-[2rem] md:aspect-[16/10] md:rounded-[2.3rem] lg:rounded-[2.7rem]"
     >
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute inset-0 bg-gradient-to-br from-[#101c35] via-[#081328] to-[#040914]" />
@@ -22,7 +22,7 @@
       />
 
       <div
-        class="relative z-20 mx-2 mt-2 flex items-center justify-between rounded-t-2xl border border-cyan-200/25 bg-gradient-to-r from-slate-200/15 via-cyan-300/10 to-violet-300/10 px-4 py-1.5 text-[11px] text-slate-200 shadow-[0_0_18px_rgba(80,190,255,0.25)] backdrop-blur-xl"
+        class="relative z-20 mx-2 mt-2 flex items-center justify-between gap-2 rounded-t-2xl border border-cyan-200/25 bg-gradient-to-r from-slate-200/15 via-cyan-300/10 to-violet-300/10 px-3 py-1.5 text-[11px] text-slate-200 shadow-[0_0_18px_rgba(80,190,255,0.25)] backdrop-blur-xl sm:px-4"
       >
         <span class="font-medium">{{ gameState.time }}</span>
         <span
@@ -32,7 +32,7 @@
       </div>
 
       <div
-        class="relative z-10 grid flex-1 grid-cols-1 gap-3 px-3 py-4 sm:gap-4 sm:px-4 sm:py-5 md:grid-cols-12 md:gap-5"
+        class="relative z-10 grid flex-1 grid-cols-1 gap-2.5 px-2.5 py-3 sm:gap-4 sm:px-4 sm:py-5 md:grid-cols-12 md:gap-5"
       >
         <section class="space-y-3 sm:space-y-4 md:col-span-3 md:space-y-6">
           <div
@@ -64,7 +64,7 @@
         </section>
 
         <section class="md:col-span-9">
-          <div class="grid grid-cols-2 content-start gap-4 pt-1.5 sm:grid-cols-4 sm:gap-6 sm:pt-2 md:gap-8 md:pt-3">
+          <div class="grid grid-cols-2 content-start gap-3 pt-1 sm:grid-cols-4 sm:gap-6 sm:pt-2 md:gap-8 md:pt-3">
             <button class="group flex flex-col items-center gap-2" @click="openApp = 'target'">
               <span
                 class="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-200/25 bg-gradient-to-br from-[#0c1a33]/90 to-[#091426]/95 text-pink-300 shadow-[0_0_20px_rgba(85,180,255,0.2)] transition-all group-hover:scale-105 group-hover:border-pink-400/50 group-hover:shadow-[0_0_28px_rgba(255,110,220,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
@@ -147,7 +147,7 @@
       </div>
 
       <div
-        class="relative z-20 mx-auto mb-2.5 flex gap-2 rounded-[1.2rem] border border-cyan-200/25 bg-gradient-to-r from-slate-200/15 via-cyan-300/10 to-violet-300/10 p-2 shadow-[0_16px_40px_rgba(0,0,0,0.45),0_0_24px_rgba(80,180,255,0.24)] backdrop-blur-2xl sm:mb-3 sm:gap-3 sm:rounded-[1.4rem] sm:p-2.5 md:gap-5 md:rounded-[1.6rem] md:p-3"
+        class="relative z-20 mx-2 mb-2.5 flex justify-center gap-2 rounded-[1.2rem] border border-cyan-200/25 bg-gradient-to-r from-slate-200/15 via-cyan-300/10 to-violet-300/10 p-2 shadow-[0_16px_40px_rgba(0,0,0,0.45),0_0_24px_rgba(80,180,255,0.24)] backdrop-blur-2xl sm:mx-auto sm:mb-3 sm:gap-3 sm:rounded-[1.4rem] sm:p-2.5 md:gap-5 md:rounded-[1.6rem] md:p-3"
       >
         <button
           class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-black/35 text-pink-300 transition hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl md:h-14 md:w-14"
