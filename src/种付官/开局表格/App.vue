@@ -135,6 +135,31 @@ function setNotice(text: string, type: 'info' | 'ok' | 'warn' = 'info') {
   noticeType.value = type;
 }
 
+type TavernHelperLike = {
+  getVariables?: (option: { type: 'message'; message_id?: number | 'latest' }) => Record<string, any>;
+  replaceVariables?: (
+    variables: Record<string, any>,
+    option: { type: 'message'; message_id?: number | 'latest' },
+  ) => void;
+};
+
+function syncProfileToSeedOfficerPanel(payload: { name: string; gender: string; identity: string }) {
+  const helper = (globalThis as any).TavernHelper as TavernHelperLike | undefined;
+  if (!helper?.getVariables || !helper?.replaceVariables) return;
+
+  const variables = structuredClone(helper.getVariables({ type: 'message' }) ?? {});
+  if (typeof variables !== 'object' || variables === null) return;
+
+  const statData = (variables.stat_data ??= {});
+  const panel = (statData.种付官面板 ??= {});
+
+  panel.姓名 = payload.name;
+  panel.性别 = payload.gender;
+  panel.身份标识 = payload.identity;
+
+  helper.replaceVariables(variables, { type: 'message' });
+}
+
 function buildPrompt(): { ok: true; text: string } | { ok: false; message: string } {
   const name = form.name.trim();
   const gender = form.gender.trim();
@@ -154,7 +179,7 @@ function buildPrompt(): { ok: true; text: string } | { ok: false; message: strin
     '',
     '请基于以上设定，生成一段适合作为当前聊天开局推进的第一幕内容。',
     '要求：保持沉浸感、情绪张力、环境细节与人物行动感。',
-    '务必更新所有变量必要变量',
+    '（务必要所有变量！！！）',
   ];
 
   return { ok: true, text: lines.join('\n') };
@@ -218,6 +243,13 @@ async function sendAndGenerate() {
 
   try {
     const userPrompt = built.text;
+
+    syncProfileToSeedOfficerPanel({
+      name: form.name.trim(),
+      gender: form.gender.trim(),
+      identity: form.identity.trim(),
+    });
+
     await (globalThis as any).createChatMessages([{ role: 'user', message: userPrompt }], {
       refresh: 'affected',
     });

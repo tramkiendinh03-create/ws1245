@@ -1,73 +1,80 @@
 <template>
-  <div class="flex w-full items-center justify-center p-1 font-sans sm:p-2 md:p-3">
+  <div class="gothic-root flex w-full items-center justify-center p-1 font-serif sm:p-2 md:p-3">
     <div
-      class="relative flex aspect-[9/16] w-full max-w-[1260px] flex-col overflow-hidden rounded-[1.4rem] border-2 border-cyan-200/25 bg-[#040914] shadow-[0_26px_80px_rgba(0,0,0,0.8),0_0_0_1px_rgba(80,210,255,0.2),0_0_40px_rgba(60,150,255,0.2)] sm:aspect-[4/5] sm:rounded-[2rem] md:aspect-[16/10] md:rounded-[2.3rem] lg:rounded-[2.7rem]"
+      class="gothic-shell relative flex aspect-[9/16] w-full max-w-[1260px] flex-col overflow-hidden rounded-[1.4rem] border border-amber-200/35 bg-[#120914] shadow-[0_30px_90px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,210,150,0.16),0_0_46px_rgba(255,120,200,0.14)] sm:aspect-[4/5] sm:rounded-[2rem] md:aspect-[16/10] md:rounded-[2.3rem] lg:rounded-[2.7rem]"
     >
       <div class="pointer-events-none absolute inset-0">
-        <div class="absolute inset-0 bg-gradient-to-br from-[#101c35] via-[#081328] to-[#040914]" />
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(120,220,255,0.18),transparent_45%)]" />
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_82%_88%,rgba(255,120,220,0.14),transparent_38%)]" />
-        <div
-          class="absolute inset-0 bg-[linear-gradient(to_right,rgba(120,170,255,0.16)_1px,transparent_1px),linear-gradient(to_bottom,rgba(120,170,255,0.12)_1px,transparent_1px)] bg-[size:34px_34px] opacity-20"
-        />
-        <div
-          class="absolute inset-0 bg-[repeating-linear-gradient(to_bottom,rgba(170,220,255,0.22)_0_1px,transparent_1px_4px)] opacity-[0.12]"
-        />
+        <div class="velvet-texture absolute inset-0" />
+        <div class="rococo-overlay absolute inset-0" />
+        <div class="ambient-vignette absolute inset-0" />
       </div>
       <div
-        class="pointer-events-none absolute inset-[10px] rounded-[2.1rem] border border-white/12 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_26px_55px_rgba(0,0,0,0.46)]"
+        class="opulent-frame pointer-events-none absolute inset-[10px] rounded-[2.1rem] border border-amber-200/30 shadow-[inset_0_0_0_1px_rgba(255,220,170,0.14),inset_0_26px_55px_rgba(0,0,0,0.52)]"
       />
       <div
-        class="pointer-events-none absolute top-2 left-1/2 z-30 h-1.5 w-24 -translate-x-1/2 rounded-full bg-white/20"
+        class="pointer-events-none absolute top-2 left-1/2 z-30 h-1.5 w-24 -translate-x-1/2 rounded-full bg-fuchsia-200/35 shadow-[0_0_14px_rgba(255,120,200,0.45)]"
       />
 
       <div
-        class="relative z-20 mx-2 mt-2 flex items-center justify-between gap-2 rounded-t-2xl border border-cyan-200/25 bg-gradient-to-r from-slate-200/15 via-cyan-300/10 to-violet-300/10 px-3 py-1.5 text-[11px] text-slate-200 shadow-[0_0_18px_rgba(80,190,255,0.25)] backdrop-blur-xl sm:px-4"
+        class="magic-glow relative z-20 mx-2 mt-2 flex items-center justify-between gap-2 rounded-t-2xl border border-amber-200/35 bg-gradient-to-r from-[#3a1a35]/55 via-[#2a1328]/50 to-[#3a1a35]/55 px-3 py-1.5 text-[11px] text-amber-50 shadow-[0_0_22px_rgba(255,120,200,0.2)] backdrop-blur-xl sm:px-4"
       >
-        <span class="font-medium">{{ gameState.time }}</span>
+        <span class="gilded-text font-medium tracking-[0.06em] text-amber-50/95">{{ gameState.time }}</span>
         <span
-          :class="['rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-wide', statusNoticeClass]"
+          :class="[
+            'rounded-full border border-amber-200/40 bg-fuchsia-300/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-[0.06em] text-rose-100 shadow-[0_0_16px_rgba(255,120,200,0.3)]',
+            statusNoticeClass,
+          ]"
           >{{ statusNotice.text }}</span
         >
       </div>
 
       <div
-        class="relative z-10 grid flex-1 grid-cols-1 gap-2.5 px-2.5 py-3 sm:gap-4 sm:px-4 sm:py-5 md:grid-cols-12 md:gap-5"
+        class="relative z-10 grid min-h-0 flex-1 grid-cols-1 gap-2.5 overflow-x-hidden overflow-y-auto px-2.5 py-3 sm:gap-4 sm:px-4 sm:py-5 md:grid-cols-12 md:gap-5"
       >
-        <section class="space-y-3 sm:space-y-4 md:col-span-3 md:space-y-6">
+        <section class="space-y-3 sm:space-y-4 md:col-span-4 md:space-y-5">
           <div
-            class="rounded-2xl border border-cyan-200/20 bg-gradient-to-br from-slate-200/15 to-slate-900/35 p-3.5 shadow-[inset_0_0_0_1px_rgba(125,220,255,0.12),0_0_24px_rgba(70,170,255,0.14)] backdrop-blur-xl sm:p-4 md:p-5"
+            class="ornate-panel rounded-2xl border border-amber-200/30 bg-gradient-to-br from-[#241126]/88 to-[#120913]/92 p-3.5 shadow-[inset_0_0_0_1px_rgba(255,220,170,0.16),0_0_26px_rgba(255,120,200,0.14)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-amber-100/45 hover:shadow-[inset_0_0_0_1px_rgba(255,235,200,0.22),0_0_36px_rgba(255,140,210,0.2)] sm:p-4 md:p-5"
           >
-            <div :class="['mb-2 text-xs font-bold tracking-wider', themeColor.value]">地点</div>
-            <h2 class="text-xl leading-none font-bold text-white sm:text-2xl md:text-[2rem]">{{ locationMain }}</h2>
-            <div class="mt-1.5 text-lg leading-none font-bold text-white/85 sm:text-xl md:mt-2 md:text-[1.85rem]">
+            <div :class="['panel-kicker gilded-text mb-2 text-xs font-bold tracking-wider', themeColor.value]">
+              地点
+            </div>
+            <h2 class="gilded-title text-lg leading-tight font-bold break-words text-white sm:text-xl md:text-2xl">
+              {{ locationMain }}
+            </h2>
+            <div
+              class="gilded-title mt-1.5 text-base leading-tight font-bold break-words text-white/85 sm:text-lg md:mt-2 md:text-xl"
+            >
               {{ locationSub }}
             </div>
 
-            <div class="mt-4 border-t border-white/15 pt-3 sm:mt-5 sm:pt-4 md:mt-6">
-              <div class="mb-2 text-xs text-slate-400">环境氛围</div>
-              <p class="line-clamp-3 text-sm text-slate-200/90 italic">{{ gameState.atmosphere }}</p>
+            <div class="mt-4 border-t border-amber-100/20 pt-3 sm:mt-5 sm:pt-4 md:mt-6">
+              <div class="mb-2 text-xs text-amber-100/65">环境氛围</div>
+              <p class="line-clamp-3 text-sm text-rose-50/90 italic">{{ gameState.atmosphere }}</p>
             </div>
           </div>
 
           <div
-            class="rounded-2xl border border-cyan-200/20 bg-gradient-to-br from-slate-200/15 to-slate-900/35 p-3.5 shadow-[inset_0_0_0_1px_rgba(125,220,255,0.12),0_0_24px_rgba(70,170,255,0.14)] backdrop-blur-xl sm:p-4 md:p-5"
+            class="ornate-panel rounded-2xl border border-amber-200/30 bg-gradient-to-br from-[#241126]/88 to-[#120913]/92 p-3.5 shadow-[inset_0_0_0_1px_rgba(255,220,170,0.16),0_0_26px_rgba(255,120,200,0.14)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-amber-100/45 hover:shadow-[inset_0_0_0_1px_rgba(255,235,200,0.22),0_0_36px_rgba(255,140,210,0.2)] sm:p-4 md:p-5"
           >
-            <div :class="['mb-2 text-xs font-bold tracking-wider', themeColor.value]">身份标识</div>
-            <div class="text-xl leading-none font-bold text-white sm:text-2xl md:text-[2rem]">
+            <div :class="['panel-kicker gilded-text mb-2 text-xs font-bold tracking-wider', themeColor.value]">
+              身份标识
+            </div>
+            <div class="gilded-title text-lg leading-tight font-bold break-words text-white sm:text-xl md:text-2xl">
               {{ gameState.player.name }}
             </div>
-            <div class="mt-1.5 text-sm text-slate-300 sm:text-base md:mt-2 md:text-xl">
+            <div
+              class="mt-1.5 line-clamp-3 text-sm leading-snug break-words text-slate-300 sm:text-base md:mt-2 md:text-base"
+            >
               {{ gameState.player.currentTask }}
             </div>
           </div>
         </section>
 
-        <section class="md:col-span-9">
-          <div class="grid grid-cols-2 content-start gap-3 pt-1 sm:grid-cols-4 sm:gap-6 sm:pt-2 md:gap-8 md:pt-3">
+        <section class="md:col-span-8">
+          <div class="grid grid-cols-2 content-start gap-3 pt-1 sm:grid-cols-4 sm:gap-6 sm:pt-2 md:gap-7 md:pt-3">
             <button class="group flex flex-col items-center gap-2" @click="openApp = 'target'">
               <span
-                class="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-200/25 bg-gradient-to-br from-[#0c1a33]/90 to-[#091426]/95 text-pink-300 shadow-[0_0_20px_rgba(85,180,255,0.2)] transition-all group-hover:scale-105 group-hover:border-pink-400/50 group-hover:shadow-[0_0_28px_rgba(255,110,220,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
+                class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-200/35 bg-gradient-to-br from-[#2a1427]/90 to-[#170b16]/95 text-rose-200 shadow-[0_0_22px_rgba(255,120,200,0.16)] transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-[1.04] group-hover:border-amber-100/60 group-hover:shadow-[0_0_30px_rgba(255,130,210,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -81,12 +88,12 @@
                   <path d="M5 19a7 7 0 0 1 14 0" />
                 </svg>
               </span>
-              <span class="text-xs text-white sm:text-sm md:text-base lg:text-lg">目标档案</span>
+              <span class="text-xs tracking-wide text-rose-50/95 sm:text-sm md:text-base">目标档案</span>
             </button>
 
             <button class="group flex flex-col items-center gap-2" @click="openApp = 'player'">
               <span
-                class="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-200/25 bg-gradient-to-br from-[#0c1a33]/90 to-[#091426]/95 text-blue-300 shadow-[0_0_20px_rgba(85,180,255,0.2)] transition-all group-hover:scale-105 group-hover:border-blue-400/50 group-hover:shadow-[0_0_28px_rgba(90,170,255,0.4)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
+                class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-200/35 bg-gradient-to-br from-[#2a1427]/90 to-[#170b16]/95 text-fuchsia-200 shadow-[0_0_22px_rgba(255,120,200,0.16)] transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-[1.04] group-hover:border-amber-100/60 group-hover:shadow-[0_0_30px_rgba(255,130,210,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -99,12 +106,12 @@
                   <path d="M12 3l6 3v5c0 4.5-2.5 7.5-6 10-3.5-2.5-6-5.5-6-10V6l6-3z" />
                 </svg>
               </span>
-              <span class="text-xs text-white sm:text-sm md:text-base lg:text-lg">种付官</span>
+              <span class="text-xs tracking-wide text-rose-50/95 sm:text-sm md:text-base">种付官</span>
             </button>
 
             <button class="group flex flex-col items-center gap-2" @click="openApp = 'inventory'">
               <span
-                class="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-200/25 bg-gradient-to-br from-[#0c1a33]/90 to-[#091426]/95 text-amber-300 shadow-[0_0_20px_rgba(85,180,255,0.2)] transition-all group-hover:scale-105 group-hover:border-amber-400/50 group-hover:shadow-[0_0_28px_rgba(255,195,90,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
+                class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-200/35 bg-gradient-to-br from-[#2a1427]/90 to-[#170b16]/95 text-amber-200 shadow-[0_0_22px_rgba(255,120,200,0.16)] transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-[1.04] group-hover:border-amber-100/60 group-hover:shadow-[0_0_30px_rgba(255,170,120,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -119,12 +126,12 @@
                   <path d="M20 7.5V16.5L12 21" />
                 </svg>
               </span>
-              <span class="text-xs text-white sm:text-sm md:text-base lg:text-lg">道具箱</span>
+              <span class="text-xs tracking-wide text-rose-50/95 sm:text-sm md:text-base">道具箱</span>
             </button>
 
             <button class="group flex flex-col items-center gap-2" @click="openApp = 'settings'">
               <span
-                class="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-200/25 bg-gradient-to-br from-[#0c1a33]/90 to-[#091426]/95 text-slate-200 shadow-[0_0_20px_rgba(85,180,255,0.2)] transition-all group-hover:scale-105 group-hover:border-white/40 group-hover:shadow-[0_0_28px_rgba(180,210,255,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
+                class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-200/35 bg-gradient-to-br from-[#2a1427]/90 to-[#170b16]/95 text-rose-100 shadow-[0_0_22px_rgba(255,120,200,0.16)] transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-[1.04] group-hover:border-amber-100/60 group-hover:shadow-[0_0_30px_rgba(255,130,210,0.35)] sm:h-14 sm:w-14 sm:rounded-2xl md:h-16 md:w-16"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -140,110 +147,40 @@
                   />
                 </svg>
               </span>
-              <span class="text-xs text-white sm:text-sm md:text-base lg:text-lg">系统设置</span>
+              <span class="text-xs tracking-wide text-rose-50/95 sm:text-sm md:text-base">系统设置</span>
             </button>
           </div>
         </section>
       </div>
 
-      <div
-        class="relative z-20 mx-2 mb-2.5 flex justify-center gap-2 rounded-[1.2rem] border border-cyan-200/25 bg-gradient-to-r from-slate-200/15 via-cyan-300/10 to-violet-300/10 p-2 shadow-[0_16px_40px_rgba(0,0,0,0.45),0_0_24px_rgba(80,180,255,0.24)] backdrop-blur-2xl sm:mx-auto sm:mb-3 sm:gap-3 sm:rounded-[1.4rem] sm:p-2.5 md:gap-5 md:rounded-[1.6rem] md:p-3"
-      >
-        <button
-          class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-black/35 text-pink-300 transition hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl md:h-14 md:w-14"
-          @click="openApp = 'target'"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-          >
-            <circle cx="12" cy="8" r="3.5" />
-            <path d="M5 19a7 7 0 0 1 14 0" />
-          </svg>
-        </button>
-        <button
-          class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-black/35 text-blue-300 transition hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl md:h-14 md:w-14"
-          @click="openApp = 'player'"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-          >
-            <path d="M12 3l6 3v5c0 4.5-2.5 7.5-6 10-3.5-2.5-6-5.5-6-10V6l6-3z" />
-          </svg>
-        </button>
-        <button
-          class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-black/35 text-amber-300 transition hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl md:h-14 md:w-14"
-          @click="openApp = 'inventory'"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-          >
-            <path d="M12 3l8 4.5-8 4.5-8-4.5L12 3z" />
-            <path d="M4 7.5V16.5L12 21" />
-            <path d="M20 7.5V16.5L12 21" />
-          </svg>
-        </button>
-        <button
-          class="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-black/35 text-slate-200 transition hover:scale-105 sm:h-12 sm:w-12 sm:rounded-2xl md:h-14 md:w-14"
-          @click="openApp = 'settings'"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-          >
-            <circle cx="12" cy="12" r="3" />
-            <path
-              d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a1 1 0 0 1 0 1.4l-1.1 1.1a1 1 0 0 1-1.4 0l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a1 1 0 0 1-1 1h-1.6a1 1 0 0 1-1-1v-.2a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a1 1 0 0 1-1.4 0l-1.1-1.1a1 1 0 0 1 0-1.4l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a1 1 0 0 1-1-1v-1.6a1 1 0 0 1 1-1h.2a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a1 1 0 0 1 0-1.4l1.1-1.1a1 1 0 0 1 1.4 0l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a1 1 0 0 1 1-1h1.6a1 1 0 0 1 1 1v.2a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a1 1 0 0 1 1.4 0l1.1 1.1a1 1 0 0 1 0 1.4l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6h.2a1 1 0 0 1 1 1v1.6a1 1 0 0 1-1 1h-.2a1 1 0 0 0-.9.6z"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <div v-if="openApp" class="absolute inset-0 z-40 bg-black/45 p-2 backdrop-blur-[2px] sm:p-3 md:p-4">
+      <div v-if="openApp" class="modal-overlay absolute inset-0 z-40 p-2 sm:p-3 md:p-4">
         <div
-          class="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/20 bg-[#060b14]/95 shadow-[0_24px_55px_rgba(0,0,0,0.45)]"
+          class="modal-shell flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-amber-200/30 bg-[#140a16]/95 shadow-[0_24px_55px_rgba(0,0,0,0.5),0_0_22px_rgba(255,120,200,0.14)]"
         >
           <header
-            class="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-[#202938]/80 to-[#101925]/90 px-4 py-2 text-xs md:text-sm"
+            class="modal-header flex items-center justify-between border-b border-amber-200/20 bg-gradient-to-r from-[#3a1a35]/80 to-[#251126]/90 px-4 py-2 text-xs md:text-sm"
           >
-            <div class="flex items-center gap-2 font-semibold text-slate-100">
-              <span class="h-2 w-2 rounded-full bg-violet-400" />
-              <span>{{ appTitle }}</span>
+            <div class="flex items-center gap-2 font-semibold text-rose-50">
+              <span class="h-2 w-2 rounded-full bg-fuchsia-300 shadow-[0_0_10px_rgba(255,120,200,0.7)]" />
+              <span class="gothic-heading tracking-[0.08em]">{{ appTitle }}</span>
             </div>
-            <div class="flex items-center gap-4 text-slate-300">
-              <span class="cursor-pointer text-base leading-none">－</span>
-              <span class="cursor-pointer text-sm leading-none">↗</span>
+            <div class="flex items-center text-slate-300">
               <button class="cursor-pointer text-base leading-none hover:text-white" @click="closeApp">×</button>
             </div>
           </header>
 
-          <main class="min-h-0 flex-1 overflow-auto p-2.5 sm:p-3 md:p-4">
+          <main class="modal-main min-h-0 flex-1 overflow-auto p-2 sm:p-2.5 md:p-3">
             <template v-if="openApp === 'target'">
               <div v-if="selectedTarget" class="space-y-3">
-                <button class="text-sm text-slate-300 hover:text-white" @click="selectedTargetIndex = null">
+                <button
+                  class="rounded-2xl border border-amber-200/35 bg-[#2b1025]/55 px-3 py-1.5 text-sm text-amber-100 transition hover:bg-[#3a1630]/70"
+                  @click="selectedTargetIndex = null"
+                >
                   ← 返回列表
                 </button>
 
                 <div
-                  class="rounded-2xl border border-violet-500/25 bg-gradient-to-br from-[#1d1222]/88 via-[#100f19]/90 to-[#180b11]/90 p-4"
+                  class="rounded-2xl border border-amber-200/30 bg-gradient-to-br from-[#2a0f24]/72 via-[#160913]/74 to-[#230814]/78 p-4 shadow-[inset_0_0_24px_rgba(255,0,120,0.16)]"
                 >
                   <div class="flex items-start gap-4">
                     <div
@@ -261,7 +198,7 @@
                       </div>
                     </div>
                     <div class="min-w-0 flex-1">
-                      <h3 class="text-2xl leading-tight font-bold text-pink-300 md:text-3xl">
+                      <h3 class="gothic-heading text-2xl leading-tight font-bold text-[#e5c593] md:text-3xl">
                         {{ selectedTarget.name }}
                       </h3>
                       <div class="mt-1 text-sm text-pink-200/85 md:text-base">
@@ -373,11 +310,14 @@
                 </div>
               </div>
 
-              <div v-else class="grid max-h-full grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 md:gap-3">
+              <div
+                v-else
+                class="gothic-scroll grid max-h-full grid-cols-1 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 md:gap-3"
+              >
                 <article
                   v-for="(target, index) in gameState.targets"
                   :key="`${target.name}-${index}`"
-                  class="group relative rounded-xl border border-white/15 bg-gradient-to-r from-white/8 to-white/3 p-2.5 transition-all hover:border-violet-400/55 md:rounded-2xl md:p-3"
+                  class="group relative rounded-2xl border border-amber-200/25 bg-gradient-to-r from-[#2a1023]/55 to-[#1a0b16]/45 p-2.5 transition-all hover:border-amber-100/55 md:p-3"
                 >
                   <button class="w-full text-left" @click="selectedTargetIndex = index">
                     <div class="flex items-center gap-4">
@@ -388,7 +328,7 @@
                       </div>
                       <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2">
-                          <h3 class="truncate text-base font-bold text-pink-200 sm:text-lg md:text-xl">
+                          <h3 class="gothic-heading truncate text-base font-bold text-[#e5c593] sm:text-lg md:text-xl">
                             {{ target.name }}
                           </h3>
                           <span class="rounded bg-white/15 px-2 py-0.5 text-xs text-slate-200"
@@ -416,91 +356,98 @@
 
             <template v-else-if="openApp === 'player'">
               <div
-                class="rounded-xl border border-blue-300/20 bg-gradient-to-r from-[#1a2337]/95 to-[#0f213f]/95 p-3 md:rounded-2xl md:p-4"
+                class="gothic-scroll mx-auto max-h-full w-full max-w-[920px] overflow-y-auto rounded-2xl border border-amber-200/30 bg-[rgba(20,0,10,0.7)] p-2.5 shadow-[inset_0_0_20px_rgba(255,0,100,0.3),0_0_15px_rgba(255,0,100,0.5)] backdrop-blur-[12px] md:p-3"
               >
-                <div class="grid grid-cols-1 gap-3 md:grid-cols-12 md:gap-4">
+                <div class="grid grid-cols-1 gap-2 md:grid-cols-12 md:gap-2.5">
                   <div class="md:col-span-8">
-                    <div class="flex items-start gap-4">
+                    <div class="flex items-start gap-3">
                       <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl border border-blue-400/35 bg-blue-500/10 text-blue-300 md:h-16 md:w-16"
+                        class="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-300/40 bg-fuchsia-400/10 text-amber-100 md:h-12 md:w-12"
                       >
                         👤
                       </div>
                       <div>
-                        <div class="text-2xl font-bold text-white md:text-4xl">{{ gameState.player.name }}</div>
-                        <div class="mt-0.5 text-sm text-blue-200/90 md:mt-1 md:text-2xl">
+                        <div
+                          class="gothic-heading text-lg leading-tight font-bold break-words text-[#e5c593] sm:text-xl md:text-2xl"
+                        >
+                          {{ gameState.player.name }}
+                        </div>
+                        <div class="mt-0.5 text-xs break-words text-rose-100/85 md:mt-1 md:text-sm">
                           {{ gameState.player.identity }} • {{ gameState.player.gender }}
                         </div>
                       </div>
                     </div>
-                    <div class="mt-4">
-                      <div class="h-3 overflow-hidden rounded-full bg-blue-900/35">
+                    <div class="mt-2.5">
+                      <div class="h-2.5 overflow-hidden rounded-full bg-[#3b1632]/55">
                         <div
-                          class="h-full rounded-full bg-cyan-400"
+                          class="h-full rounded-full bg-gradient-to-r from-[#d379ae] to-[#f0be7f]"
                           :style="{ width: `${(gameState.player.xp / gameState.player.maxXp) * 100}%` }"
                         />
                       </div>
-                      <div class="mt-1 text-right text-xs text-blue-300 md:text-base">
+                      <div class="mt-1 text-right text-[11px] text-amber-100/85 md:text-sm">
                         {{ gameState.player.xp }} / {{ gameState.player.maxXp }}
                       </div>
                     </div>
                   </div>
                   <div class="flex justify-end md:col-span-4">
                     <div
-                      class="h-fit rounded-lg border border-blue-400/35 bg-blue-500/15 px-2.5 py-1.5 text-sm font-semibold text-blue-200 md:px-3 md:py-2 md:text-xl"
+                      class="gothic-heading h-fit rounded-2xl border border-amber-300/40 bg-fuchsia-400/10 px-2 py-1 text-xs font-semibold text-[#e5c593] md:px-2.5 md:py-1.5 md:text-sm"
                     >
                       当前等级 {{ gameState.player.level }}
                     </div>
                   </div>
                 </div>
 
-                <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
-                  <div class="rounded-xl border border-white/10 bg-white/5 p-3 md:p-4">
-                    <div class="text-sm text-cyan-300 md:text-lg">种付点数</div>
-                    <div class="mt-1 text-3xl font-extrabold text-yellow-300 md:text-5xl">
+                <div class="mt-2.5 grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-2.5">
+                  <div class="rounded-2xl border border-amber-200/25 bg-[#2b1024]/38 p-2.5 md:p-3">
+                    <div class="gothic-heading text-sm text-[#e5c593] md:text-base">种付点数</div>
+                    <div class="mt-1 text-2xl font-extrabold text-yellow-300 md:text-3xl">
                       ⚡ {{ gameState.player.points }}
                     </div>
                   </div>
 
-                  <div class="rounded-xl border border-white/10 bg-white/5 p-3 md:p-4">
-                    <div class="text-sm text-cyan-300 md:text-lg">当前任务</div>
-                    <div class="mt-1 text-xl text-white md:text-3xl">{{ gameState.player.currentTask }}</div>
+                  <div class="rounded-2xl border border-amber-200/25 bg-[#2b1024]/38 p-2.5 md:p-3">
+                    <div class="gothic-heading text-sm text-[#e5c593] md:text-base">当前任务</div>
+                    <div class="mt-1 line-clamp-2 text-base leading-snug break-words text-white md:text-lg">
+                      {{ gameState.player.currentTask }}
+                    </div>
                   </div>
                 </div>
 
-                <div class="mt-5">
-                  <div class="mb-2 text-sm text-slate-300 md:text-lg">持有道具</div>
-                  <div class="flex flex-wrap gap-2">
-                    <span
-                      v-for="item in gameState.player.items"
-                      :key="item"
-                      class="rounded-md border border-slate-300/25 bg-slate-500/10 px-2 py-1 text-sm text-slate-200 md:text-lg"
-                      >{{ item }}</span
-                    >
-                  </div>
-                </div>
-
-                <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
-                  <div class="rounded-xl border border-amber-400/25 bg-amber-500/5 p-3 md:p-4">
-                    <div class="text-sm text-amber-300 md:text-lg">临时加成</div>
-                    <div class="mt-2 flex flex-wrap gap-2">
+                <div class="mt-2.5 grid grid-cols-1 gap-2 md:grid-cols-3">
+                  <div class="md:col-span-1">
+                    <div class="mb-1.5 text-xs text-slate-300 md:text-sm">持有道具</div>
+                    <div class="flex max-h-[92px] flex-wrap gap-1.5 overflow-y-auto pr-1">
                       <span
-                        v-for="buff in gameState.player.tempBuffs"
-                        :key="buff"
-                        class="rounded-md border border-amber-300/35 bg-amber-300/10 px-2 py-1 text-sm text-amber-200 md:text-lg"
-                        >{{ buff }}</span
+                        v-for="item in gameState.player.items"
+                        :key="item"
+                        class="rounded-md border border-slate-300/25 bg-slate-500/10 px-2 py-1 text-[11px] text-slate-200 md:text-xs"
+                        >{{ item }}</span
                       >
                     </div>
                   </div>
-                  <div class="rounded-xl border border-emerald-400/25 bg-emerald-500/5 p-3 md:p-4">
-                    <div class="text-sm text-emerald-300 md:text-lg">永久特性</div>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      <span
-                        v-for="trait in gameState.player.permTraits"
-                        :key="trait"
-                        class="rounded-md border border-emerald-300/35 bg-emerald-300/10 px-2 py-1 text-sm text-emerald-200 md:text-lg"
-                        >{{ trait }}</span
-                      >
+                  <div class="grid grid-cols-1 gap-2 md:col-span-2 md:grid-cols-2">
+                    <div class="rounded-2xl border border-amber-300/30 bg-[#351c1a]/30 p-2.5 md:p-3">
+                      <div class="gothic-heading text-sm text-[#e5c593] md:text-base">临时加成</div>
+                      <div class="mt-1.5 flex max-h-[86px] flex-wrap gap-1.5 overflow-y-auto pr-1">
+                        <span
+                          v-for="buff in gameState.player.tempBuffs"
+                          :key="buff"
+                          class="rounded-md border border-amber-300/35 bg-amber-300/10 px-2 py-1 text-[11px] text-amber-200 md:text-xs"
+                          >{{ buff }}</span
+                        >
+                      </div>
+                    </div>
+                    <div class="rounded-2xl border border-fuchsia-300/30 bg-[#2d1127]/35 p-2.5 md:p-3">
+                      <div class="gothic-heading text-sm text-[#e5c593] md:text-base">永久特性</div>
+                      <div class="mt-1.5 flex max-h-[86px] flex-wrap gap-1.5 overflow-y-auto pr-1">
+                        <span
+                          v-for="trait in gameState.player.permTraits"
+                          :key="trait"
+                          class="rounded-md border border-emerald-300/35 bg-emerald-300/10 px-2 py-1 text-[11px] text-emerald-200 md:text-xs"
+                          >{{ trait }}</span
+                        >
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -509,33 +456,35 @@
 
             <template v-else-if="openApp === 'inventory'">
               <div
-                class="max-h-full overflow-y-auto rounded-xl border border-blue-300/20 bg-gradient-to-r from-[#1a2337]/95 to-[#0f213f]/95 p-3 md:rounded-2xl md:p-4"
+                class="gothic-scroll mx-auto max-h-full w-full max-w-[920px] overflow-y-auto rounded-2xl border border-amber-200/30 bg-[rgba(20,0,10,0.7)] p-2.5 shadow-[inset_0_0_20px_rgba(255,0,100,0.3),0_0_15px_rgba(255,0,100,0.5)] backdrop-blur-[12px] md:p-3"
               >
-                <div class="mb-3 text-xl font-bold text-amber-300 md:mb-4 md:text-2xl">
+                <div class="gothic-heading mb-2.5 text-lg font-bold text-[#e5c593] md:mb-3 md:text-xl">
                   ⌬ 持有道具 ({{ gameState.player.items.length }})
                 </div>
-                <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:gap-3 lg:grid-cols-4">
+                <div class="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 md:gap-2.5 lg:grid-cols-6">
                   <article
                     v-for="(item, index) in gameState.player.items"
                     :key="`${item}-${index}`"
-                    class="group relative flex h-24 flex-col items-center justify-center rounded-xl border border-white/15 bg-white/5 sm:h-28 md:h-32 md:rounded-2xl"
+                    class="group relative flex h-18 flex-col items-center justify-center rounded-2xl border border-amber-200/25 bg-[#2b1024]/40 sm:h-20 md:h-22"
                   >
                     <button
-                      class="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-500/30 text-xs text-red-200 opacity-0 transition group-hover:opacity-100 hover:bg-red-500/55"
+                      class="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-500/30 text-[10px] text-red-200 opacity-0 transition group-hover:opacity-100 hover:bg-red-500/55"
                       @click.stop="requestRemoveItem(index)"
                     >
                       🗑
                     </button>
-                    <div class="text-2xl text-amber-300 md:text-3xl">⬡</div>
-                    <div class="mt-1.5 text-sm text-slate-100 md:mt-2 md:text-lg">{{ item }}</div>
+                    <div class="text-base text-amber-300 md:text-lg">⬡</div>
+                    <div class="mt-0.5 line-clamp-1 text-[11px] text-slate-100 md:text-xs">{{ item }}</div>
                   </article>
                 </div>
               </div>
             </template>
 
             <template v-else-if="openApp === 'settings'">
-              <div class="space-y-3 rounded-2xl border border-white/15 bg-white/5 p-3 md:space-y-4 md:p-4">
-                <div class="text-base text-slate-200 md:text-xl">界面主题色</div>
+              <div
+                class="space-y-3 rounded-2xl border border-amber-200/30 bg-[rgba(20,0,10,0.7)] p-3 shadow-[inset_0_0_20px_rgba(255,0,100,0.3),0_0_15px_rgba(255,0,100,0.5)] backdrop-blur-[12px] md:space-y-4 md:p-4"
+              >
+                <div class="gothic-heading text-base text-[#e5c593] md:text-xl">界面主题色</div>
                 <div class="flex flex-wrap gap-4">
                   <button
                     v-for="color in themeColors"
@@ -566,12 +515,12 @@
         class="absolute inset-0 z-50 flex items-center justify-center bg-black/55 p-3 backdrop-blur-sm"
       >
         <div
-          class="w-full max-w-md rounded-2xl border border-white/20 bg-gradient-to-br from-[#1a2434] to-[#0f1827] p-4 shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+          class="w-full max-w-md rounded-2xl border border-amber-200/30 bg-[rgba(20,0,10,0.7)] p-4 shadow-[inset_0_0_20px_rgba(255,0,100,0.3),0_0_15px_rgba(255,0,100,0.5),0_24px_60px_rgba(0,0,0,0.55)] backdrop-blur-[12px]"
         >
           <div class="flex items-start gap-3">
             <div class="mt-0.5 rounded-xl border border-amber-300/40 bg-amber-400/10 px-2 py-1 text-amber-200">⚠</div>
             <div class="min-w-0 flex-1">
-              <div class="text-base font-bold text-white">确认删除</div>
+              <div class="gothic-heading text-base font-bold text-[#e5c593]">确认删除</div>
               <p class="mt-1 text-sm text-slate-200/90">
                 即将删除
                 <span class="font-semibold text-pink-300">「{{ pendingDelete.name }}」</span>
@@ -582,13 +531,13 @@
 
           <div class="mt-4 flex justify-end gap-2">
             <button
-              class="rounded-lg border border-white/20 bg-white/8 px-3 py-1.5 text-sm text-slate-200 transition hover:bg-white/15"
+              class="rounded-2xl border border-amber-200/25 bg-[#2b1024]/45 px-3 py-1.5 text-sm text-amber-50 transition hover:bg-[#3a1630]/70"
               @click="cancelDelete"
             >
               取消
             </button>
             <button
-              class="rounded-lg border border-red-400/45 bg-red-500/20 px-3 py-1.5 text-sm font-semibold text-red-100 transition hover:bg-red-500/35"
+              class="rounded-2xl border border-rose-300/50 bg-rose-500/20 px-3 py-1.5 text-sm font-semibold text-rose-50 transition hover:bg-rose-500/35"
               @click="confirmDelete"
             >
               确认删除
@@ -1068,9 +1017,9 @@ const statusNoticeClass = computed(() => {
     return 'border-emerald-300/40 bg-emerald-400/15 text-emerald-100';
   }
   if (statusNotice.value.type === 'warn') {
-    return 'border-amber-300/40 bg-amber-400/15 text-amber-100';
+    return 'border-rose-300/45 bg-rose-400/18 text-rose-100';
   }
-  return 'border-cyan-300/35 bg-cyan-400/10 text-cyan-100';
+  return 'border-amber-200/40 bg-fuchsia-300/12 text-rose-100';
 });
 
 function closeApp() {
@@ -1085,3 +1034,295 @@ function getSubmissionStage(val: number) {
   return '彻底沦陷 / 完全控制';
 }
 </script>
+
+<style scoped>
+.gothic-root {
+  --rose-gold: #e6b78e;
+  --rose-gold-2: #d79c79;
+  --gloom-plum: #120610;
+  --rune-glow: rgba(242, 174, 112, 0.6);
+  background-color: #1a0505;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(100, 0, 50, 0.1) 0%, transparent 50%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(70, 0, 20, 0.1) 0px,
+      rgba(70, 0, 20, 0.1) 2px,
+      transparent 2px,
+      transparent 12px
+    );
+}
+
+:global(body) {
+  background-color: #1a0505;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(100, 0, 50, 0.1) 0%, transparent 50%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(70, 0, 20, 0.1) 0px,
+      rgba(70, 0, 20, 0.1) 2px,
+      transparent 2px,
+      transparent 12px
+    );
+}
+
+.gothic-heading {
+  font-family: 'Cinzel Decorative', cursive;
+  color: #e5c593;
+  font-weight: 700;
+  text-shadow:
+    0 1px 0 rgba(255, 237, 199, 0.3),
+    0 0 10px rgba(255, 0, 222, 0.38),
+    0 0 22px rgba(255, 170, 110, 0.24);
+}
+
+.modal-overlay {
+  background: rgba(10, 0, 8, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.modal-shell {
+  background: rgba(20, 0, 10, 0.7) !important;
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow:
+    0 0 20px rgba(255, 0, 100, 0.3) inset,
+    0 0 15px rgba(255, 0, 100, 0.5),
+    0 24px 55px rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-header {
+  border-radius: 16px 16px 0 0;
+  box-shadow:
+    0 0 12px rgba(255, 0, 170, 0.24),
+    inset 0 -1px 0 rgba(255, 220, 170, 0.14);
+}
+
+.modal-main {
+  font-family: 'Playfair Display', serif;
+}
+
+.modal-main,
+.modal-main * {
+  border-radius: 16px;
+}
+
+.gothic-scroll::-webkit-scrollbar {
+  width: 7px;
+}
+
+.gothic-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255, 0, 222, 0.55), rgba(229, 197, 147, 0.5));
+  border-radius: 999px;
+}
+
+.gothic-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.gothic-shell {
+  box-shadow:
+    0 38px 88px rgba(0, 0, 0, 0.88),
+    0 0 0 1px rgba(230, 183, 142, 0.24),
+    0 0 48px rgba(212, 98, 171, 0.25),
+    inset 0 0 90px rgba(0, 0, 0, 0.55);
+}
+
+.velvet-texture {
+  background-image:
+    linear-gradient(140deg, rgba(24, 6, 22, 0.9), rgba(10, 3, 12, 0.96)),
+    url('https://images.unsplash.com/photo-1616627561839-074385245ff6?auto=format&fit=crop&w=2200&q=80');
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat;
+  background-blend-mode: multiply, normal;
+  filter: saturate(0.9) contrast(1.08) brightness(0.7);
+}
+
+.rococo-overlay {
+  background-image:
+    radial-gradient(circle at 24% 20%, rgba(214, 168, 115, 0.16), transparent 55%),
+    radial-gradient(circle at 74% 80%, rgba(186, 92, 156, 0.2), transparent 45%),
+    url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+  background-size:
+    auto,
+    auto,
+    280px 280px;
+  background-blend-mode: screen, screen, soft-light;
+  opacity: 0.5;
+}
+
+.ambient-vignette {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.58) 100%),
+    linear-gradient(160deg, rgba(255, 191, 138, 0.04), rgba(0, 0, 0, 0.36));
+}
+
+.opulent-frame {
+  border-color: rgba(230, 183, 142, 0.45);
+  box-shadow:
+    inset 0 0 0 1px rgba(241, 197, 151, 0.24),
+    inset 0 0 40px rgba(178, 108, 70, 0.16),
+    0 0 20px rgba(230, 146, 108, 0.2);
+}
+
+.magic-glow {
+  box-shadow:
+    0 0 22px rgba(214, 96, 178, 0.26),
+    0 0 42px rgba(232, 168, 108, 0.14),
+    inset 0 0 26px rgba(255, 198, 148, 0.08);
+}
+
+.gilded-text {
+  color: #f3d7b6;
+  text-shadow:
+    0 1px 0 rgba(255, 233, 195, 0.32),
+    0 0 8px rgba(244, 192, 122, 0.42),
+    0 0 16px rgba(245, 171, 108, 0.2);
+}
+
+.gilded-title {
+  color: #f8e9d0;
+  text-shadow:
+    0 1px 0 rgba(255, 248, 227, 0.35),
+    0 0 10px rgba(246, 193, 128, 0.4),
+    0 0 24px rgba(206, 120, 96, 0.24);
+}
+
+.ornate-panel {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(230, 183, 142, 0.42) !important;
+}
+
+.ornate-panel::before,
+.ornate-panel::after {
+  content: '';
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(236, 201, 147, 0.85) 0 18%, transparent 38%),
+    conic-gradient(from 180deg, rgba(236, 201, 147, 0.9), rgba(178, 110, 73, 0.2), rgba(236, 201, 147, 0.9));
+  filter: drop-shadow(0 0 8px rgba(242, 176, 112, 0.5));
+  animation: runePulse 3.2s ease-in-out infinite;
+}
+
+.ornate-panel::before {
+  top: 8px;
+  left: 8px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.ornate-panel::after {
+  right: 8px;
+  bottom: 8px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  animation-delay: 1.1s;
+}
+
+.panel-kicker {
+  letter-spacing: 0.16em;
+}
+
+.arcane-dock {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(239, 173, 111, 0.16), transparent 70%),
+    linear-gradient(120deg, rgba(82, 28, 60, 0.72), rgba(34, 14, 37, 0.85)),
+    url('https://www.transparenttextures.com/patterns/black-linen.png');
+  background-blend-mode: screen, normal, soft-light;
+}
+
+.dock-key {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(230, 183, 142, 0.45);
+  background-image:
+    radial-gradient(circle at 30% 20%, rgba(255, 206, 150, 0.16), transparent 58%),
+    radial-gradient(circle at 70% 80%, rgba(213, 90, 159, 0.2), transparent 45%);
+  box-shadow:
+    inset 0 0 0 1px rgba(245, 207, 162, 0.18),
+    0 0 14px rgba(245, 164, 108, 0.2);
+}
+
+.dock-key::before {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border-radius: 999px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 205, 138, 0.45),
+    rgba(205, 118, 174, 0.32),
+    rgba(255, 205, 138, 0.45)
+  );
+  opacity: 0.46;
+  filter: blur(0.3px);
+}
+
+.dock-key::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  border: 1px solid rgba(244, 201, 143, 0.3);
+  box-shadow: inset 0 0 14px rgba(245, 169, 102, 0.16);
+}
+
+.dock-key svg {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 6px rgba(255, 197, 128, 0.5));
+}
+
+.dock-key--active {
+  border-color: rgba(248, 216, 166, 0.88) !important;
+  box-shadow:
+    0 0 24px rgba(248, 188, 116, 0.56),
+    0 0 46px rgba(214, 86, 171, 0.42),
+    inset 0 0 26px rgba(246, 176, 105, 0.3);
+}
+
+.dock-key--active::before {
+  animation: sigilRotate 4s linear infinite;
+  opacity: 0.8;
+}
+
+.dock-key--active::after {
+  animation: arcaneBurst 1.8s ease-in-out infinite;
+}
+
+@keyframes runePulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    filter: drop-shadow(0 0 7px rgba(242, 176, 112, 0.45));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px rgba(242, 176, 112, 0.7));
+  }
+}
+
+@keyframes sigilRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arcaneBurst {
+  0%,
+  100% {
+    box-shadow: inset 0 0 12px rgba(248, 184, 118, 0.2);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 20px rgba(251, 206, 150, 0.45),
+      0 0 20px rgba(216, 84, 168, 0.4);
+  }
+}
+</style>
