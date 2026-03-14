@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+﻿import type { ReactNode } from 'react';
 import _ from 'lodash';
 import { useState } from 'react';
 import { Activity, Brain, Crosshair, Flame, Heart, Shield, Sparkles } from './icons';
@@ -18,6 +18,7 @@ type ProtagonistViewModel = {
   yuri: number;
   cognition: string;
   sensitivity: string;
+  freeAttributePoints: number;
   strategyPoints: number;
   route: string;
 };
@@ -35,6 +36,7 @@ const FALLBACK_MODEL: ProtagonistViewModel = {
   yuri: 0,
   cognition: '暂无数据',
   sensitivity: '暂无数据',
+  freeAttributePoints: 0,
   strategyPoints: 0,
   route: '暂无路线',
 };
@@ -48,8 +50,11 @@ function buildSensitivityText(rawSensitivity: unknown): string {
     return FALLBACK_MODEL.sensitivity;
   }
 
-  const degree = toDisplayString(_.get(rawSensitivity, '当前程度'));
-  const reaction = toDisplayString(_.get(rawSensitivity, '当前表现') ?? _.get(rawSensitivity, '表现') ?? _.get(rawSensitivity, '描述'));
+  const degree = toDisplayString(_.get(rawSensitivity, '当前程度'), '');
+  const reaction = toDisplayString(
+    _.get(rawSensitivity, '当前表现') ?? _.get(rawSensitivity, '表现') ?? _.get(rawSensitivity, '描述'),
+    '',
+  );
 
   return [degree, reaction].filter(Boolean).join(' - ') || FALLBACK_MODEL.sensitivity;
 }
@@ -60,7 +65,7 @@ function buildProtagonistModel(statData: Record<string, any>): ProtagonistViewMo
 
   const development = _.get(panel, '数值与养成');
   const coreStatus = _.get(panel, '核心状态');
-  const sensitivity = _.get(panel, '身体敏感化');
+  const sensitivity = _.get(panel, '身体敏感变化');
 
   return {
     name: toDisplayString(_.get(panel, '姓名') ?? _.get(panel, '名字'), FALLBACK_MODEL.name),
@@ -78,6 +83,10 @@ function buildProtagonistModel(statData: Record<string, any>): ProtagonistViewMo
     yuri: _.clamp(toDisplayNumber(_.get(coreStatus, '百合度') ?? _.get(coreStatus, '亲密度'), 0), -100, 100),
     cognition: toDisplayString(_.get(coreStatus, '直女认知阶段') ?? _.get(coreStatus, '认知阶段'), FALLBACK_MODEL.cognition),
     sensitivity: buildSensitivityText(sensitivity),
+    freeAttributePoints: toDisplayNumber(
+      _.get(development, '自由属性点') ?? _.get(panel, '自由属性点') ?? _.get(statData, '自由属性点'),
+      0,
+    ),
     strategyPoints: toDisplayNumber(_.get(development, '攻略点数') ?? _.get(panel, '攻略点数'), 0),
     route: toDisplayString(_.get(development, '当前攻略路线') ?? _.get(panel, '当前攻略路线'), FALLBACK_MODEL.route),
   };
@@ -87,8 +96,8 @@ export function ProtagonistContent() {
   const model = useStatData(buildProtagonistModel);
   const [pendingStat, setPendingStat] = useState<string | null>(null);
 
-    const applyPoint = (statKey: 'intelligence' | 'charm' | 'stamina' | 'luck', amount: number) => {
-      if (pendingStat || model.strategyPoints < amount) return;
+  const applyPoint = (statKey: 'intelligence' | 'charm' | 'stamina' | 'luck', amount: number) => {
+    if (pendingStat || model.freeAttributePoints < amount) return;
 
     const statPathMap = {
       intelligence: ['智力', '智慧'],
@@ -99,29 +108,33 @@ export function ProtagonistContent() {
 
     setPendingStat(statKey);
 
-      const updated = updateMessageVariables(variables => {
-        const statData = _.get(variables, 'stat_data');
-        if (!_.isObject(statData)) return;
+    const updated = updateMessageVariables(variables => {
+      const statData = _.get(variables, 'stat_data');
+      if (!_.isObject(statData)) return;
 
       const panelPath = _.has(statData, '主控面板') ? '主控面板' : '主角面板';
       const developmentPath = `${panelPath}.数值与养成`;
       const development = _.get(statData, developmentPath);
       if (!_.isObject(development)) return;
 
-      const pointPath = _.has(development, '攻略点数') ? `${developmentPath}.攻略点数` : `${panelPath}.攻略点数`;
+      const pointPath = _.has(development, '自由属性点')
+        ? `${developmentPath}.自由属性点`
+        : _.has(statData, `${panelPath}.自由属性点`)
+          ? `${panelPath}.自由属性点`
+          : '自由属性点';
       const currentPoints = toDisplayNumber(_.get(statData, pointPath), 0);
       if (currentPoints < amount) return;
 
-        const candidates = statPathMap[statKey];
-        const existingKey = candidates.find(key => _.has(development, key)) ?? candidates[0];
-        const fullStatPath = `${developmentPath}.${existingKey}`;
-        const currentStat = toDisplayNumber(_.get(statData, fullStatPath), 0);
-        const spendAmount = Math.min(amount, Math.max(0, 100 - currentStat));
-        if (spendAmount <= 0 || currentPoints < spendAmount) return;
+      const candidates = statPathMap[statKey];
+      const existingKey = candidates.find(key => _.has(development, key)) ?? candidates[0];
+      const fullStatPath = `${developmentPath}.${existingKey}`;
+      const currentStat = toDisplayNumber(_.get(statData, fullStatPath), 0);
+      const spendAmount = Math.min(amount, Math.max(0, 100 - currentStat));
+      if (spendAmount <= 0 || currentPoints < spendAmount) return;
 
-        _.set(statData, fullStatPath, Math.min(100, currentStat + spendAmount));
-        _.set(statData, pointPath, Math.max(0, currentPoints - spendAmount));
-      });
+      _.set(statData, fullStatPath, Math.min(100, currentStat + spendAmount));
+      _.set(statData, pointPath, Math.max(0, currentPoints - spendAmount));
+    });
 
     if (!updated) {
       setPendingStat(null);
@@ -190,11 +203,11 @@ export function ProtagonistContent() {
             value={model.stats.intelligence}
             color="bg-blue-500"
             textColor="text-blue-400"
-            canSpend={model.strategyPoints > 0 && model.stats.intelligence < 100}
+            canSpend={model.freeAttributePoints > 0 && model.stats.intelligence < 100}
             pending={pendingStat === 'intelligence'}
             onAddOne={() => applyPoint('intelligence', 1)}
             onAddFive={() => applyPoint('intelligence', 5)}
-            availablePoints={model.strategyPoints}
+            availablePoints={model.freeAttributePoints}
           />
           <StatBar
             icon={<Sparkles size={14} />}
@@ -202,11 +215,11 @@ export function ProtagonistContent() {
             value={model.stats.charm}
             color="bg-yellow-500"
             textColor="text-yellow-400"
-            canSpend={model.strategyPoints > 0 && model.stats.charm < 100}
+            canSpend={model.freeAttributePoints > 0 && model.stats.charm < 100}
             pending={pendingStat === 'charm'}
             onAddOne={() => applyPoint('charm', 1)}
             onAddFive={() => applyPoint('charm', 5)}
-            availablePoints={model.strategyPoints}
+            availablePoints={model.freeAttributePoints}
           />
           <StatBar
             icon={<Activity size={14} />}
@@ -214,11 +227,11 @@ export function ProtagonistContent() {
             value={model.stats.stamina}
             color="bg-green-500"
             textColor="text-green-400"
-            canSpend={model.strategyPoints > 0 && model.stats.stamina < 100}
+            canSpend={model.freeAttributePoints > 0 && model.stats.stamina < 100}
             pending={pendingStat === 'stamina'}
             onAddOne={() => applyPoint('stamina', 1)}
             onAddFive={() => applyPoint('stamina', 5)}
-            availablePoints={model.strategyPoints}
+            availablePoints={model.freeAttributePoints}
           />
           <StatBar
             icon={<Flame size={14} />}
@@ -226,11 +239,11 @@ export function ProtagonistContent() {
             value={model.stats.luck}
             color="bg-orange-500"
             textColor="text-orange-400"
-            canSpend={model.strategyPoints > 0 && model.stats.luck < 100}
+            canSpend={model.freeAttributePoints > 0 && model.stats.luck < 100}
             pending={pendingStat === 'luck'}
             onAddOne={() => applyPoint('luck', 1)}
             onAddFive={() => applyPoint('luck', 5)}
-            availablePoints={model.strategyPoints}
+            availablePoints={model.freeAttributePoints}
           />
         </div>
 
@@ -256,7 +269,7 @@ export function ProtagonistContent() {
           </div>
 
           <div className="bg-pink-950/40 border border-pink-500/30 rounded-lg p-2.5 sm:p-3 shadow-[0_0_15px_rgba(236,72,153,0.1)]">
-            <div className="text-xs text-pink-400/80 mb-1">身体敏感化</div>
+            <div className="text-xs text-pink-400/80 mb-1">身体敏感变化</div>
             <div className="text-sm text-pink-200 font-bold">{model.sensitivity}</div>
           </div>
         </div>
@@ -273,14 +286,47 @@ export function ProtagonistContent() {
         </h3>
 
         <div className="space-y-3 sm:space-y-4 relative z-10">
-          <div className="flex items-center justify-between p-2.5 sm:p-3 bg-black/40 rounded-xl border border-purple-500/20 shadow-inner">
-            <div>
-              <span className="text-sm text-purple-300/80">攻略点数</span>
-              <div className="text-[10px] text-purple-300/45 mt-1">可用于提升四维，1 点换 1 属性</div>
+          <div className="relative overflow-hidden rounded-xl border border-fuchsia-400/28 bg-[linear-gradient(135deg,rgba(23,3,31,0.94),rgba(56,8,61,0.82)_45%,rgba(111,15,87,0.72))] p-2.5 sm:p-3 shadow-[0_0_22px_rgba(217,70,239,0.14)]">
+            <div className="pointer-events-none absolute inset-[1px] rounded-[11px] border border-fuchsia-100/8" />
+            <div className="pointer-events-none absolute -left-6 top-1/2 h-14 w-14 -translate-y-1/2 rounded-full bg-fuchsia-400/16 blur-2xl" />
+            <div className="pointer-events-none absolute right-3 top-0 h-10 w-24 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_72%)]" />
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-fuchsia-200 via-fuchsia-500 to-transparent" />
+            <div className="relative z-10 flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-fuchsia-200/30 bg-fuchsia-500/12 text-fuchsia-100 shadow-[0_0_14px_rgba(217,70,239,0.22)]">
+                  <Brain size={15} />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[10px] tracking-[0.3em] text-fuchsia-100/45">ATTRIBUTE TOKEN</div>
+                  <span className="mt-1 block text-sm font-semibold text-fuchsia-50/92 drop-shadow-[0_0_8px_rgba(217,70,239,0.2)]">自由属性点</span>
+                  <div className="mt-1 text-[10px] text-fuchsia-100/55">用于四维加点，1 点兑换 1 属性</div>
+                </div>
+              </div>
+              <span className="shrink-0 rounded-full border border-fuchsia-100/18 bg-black/20 px-3 py-1 text-lg font-mono font-bold text-fuchsia-50 shadow-[inset_0_0_12px_rgba(217,70,239,0.14),0_0_14px_rgba(217,70,239,0.18)]">
+                {model.freeAttributePoints.toLocaleString('zh-CN')}
+              </span>
             </div>
-            <span className="text-lg font-mono text-purple-300 font-bold drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">
-              {model.strategyPoints.toLocaleString('zh-CN')}
-            </span>
+          </div>
+
+          <div className="relative overflow-hidden rounded-xl border border-pink-400/25 bg-[linear-gradient(135deg,rgba(35,3,23,0.92),rgba(44,6,38,0.82)_42%,rgba(88,12,64,0.72))] p-2.5 sm:p-3 shadow-[0_0_20px_rgba(236,72,153,0.14)]">
+            <div className="pointer-events-none absolute inset-[1px] rounded-[11px] border border-pink-200/8" />
+            <div className="pointer-events-none absolute -right-6 top-1/2 h-14 w-14 -translate-y-1/2 rounded-full bg-pink-400/15 blur-2xl" />
+            <div className="pointer-events-none absolute left-3 top-0 h-10 w-24 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_72%)]" />
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-300 via-fuchsia-500 to-transparent" />
+            <div className="relative z-10 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-pink-300/30 bg-pink-500/12 text-pink-200 shadow-[0_0_14px_rgba(244,114,182,0.2)]">
+                  <Sparkles size={15} />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[10px] tracking-[0.32em] text-pink-200/50">EXCHANGE CREDIT</div>
+                  <span className="mt-1 block text-sm font-semibold text-pink-100/92 drop-shadow-[0_0_8px_rgba(244,114,182,0.22)]">攻略点数</span>
+                </div>
+              </div>
+              <span className="shrink-0 rounded-full border border-pink-200/18 bg-black/20 px-3 py-1 text-lg font-mono font-bold text-pink-100 shadow-[inset_0_0_12px_rgba(244,114,182,0.12),0_0_14px_rgba(244,114,182,0.16)]">
+                {model.strategyPoints.toLocaleString('zh-CN')}
+              </span>
+            </div>
           </div>
 
           <div className="p-2.5 sm:p-3 bg-black/40 rounded-xl border border-pink-500/20 shadow-inner">
@@ -360,3 +406,5 @@ function PointButton({
     </button>
   );
 }
+
+
