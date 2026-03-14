@@ -1,0 +1,5 @@
+{
+  "name": "百合恋爱文字冒险系统",
+  "description": "一个基于LLM的百合向校园恋爱文字冒险游戏交互界面，包含角色状态面板、系统任务和对话交互区域。",
+  "requestFramePermissions": []
+}
