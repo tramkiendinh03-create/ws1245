@@ -1,4 +1,4 @@
-import _ from 'lodash';
+﻿import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 type TavernHelperLike = {
@@ -21,6 +21,72 @@ export function toDisplayString(value: unknown, fallback = ''): string {
 export function toDisplayNumber(value: unknown, fallback = 0): number {
   const num = Number(value);
   return Number.isFinite(num) ? num : fallback;
+}
+
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/tramkiendinh03-create/ws1245/main/baihe';
+
+function encodePathSegment(value: string): string {
+  return encodeURIComponent(value.trim());
+}
+
+function joinRawImageUrl(folder: string, fileName: string): string {
+  return GITHUB_RAW_BASE + '/' + encodePathSegment(folder) + '/' + encodePathSegment(fileName);
+}
+
+export function getBaiheStageByFavorability(value: unknown): 1 | 2 | 3 | 4 | 5 {
+  const favorability = _.clamp(toDisplayNumber(value, 0), 0, 100);
+  if (favorability <= 20) return 1;
+  if (favorability <= 40) return 2;
+  if (favorability <= 60) return 3;
+  if (favorability <= 80) return 4;
+  return 5;
+}
+
+export function getBaiheDominanceSuffix(value: unknown): '支配低' | '支配中' | '支配高' {
+  const dominance = toDisplayNumber(value, 0);
+  if (dominance < -70) return '支配低';
+  if (dominance > 70) return '支配高';
+  return '支配中';
+}
+
+export function resolveTargetBaiheImageUrl(name: unknown, favorability: unknown, dominance: unknown): string {
+  const fullName = toDisplayString(name);
+  if (!fullName) return '';
+
+  const stage = getBaiheStageByFavorability(favorability);
+  if (stage < 5) {
+    const stageLabel = stage === 1 ? '一' : stage === 2 ? '二' : stage === 3 ? '三' : '四';
+    return joinRawImageUrl(fullName, fullName + '-阶段' + stageLabel + '.png');
+  }
+
+  return joinRawImageUrl(fullName, fullName + '-阶段五-' + getBaiheDominanceSuffix(dominance) + '.png');
+}
+
+export function resolveProtagonistBaiheImageUrl(yuriValue: unknown): string {
+  const yuri = _.clamp(toDisplayNumber(yuriValue, 0), 0, 100);
+
+  if (yuri <= 0) {
+    return joinRawImageUrl('主角', '主角-百合0.png');
+  }
+  if (yuri <= 20) {
+    return joinRawImageUrl('主角', '主角-百合1-20.png');
+  }
+  if (yuri <= 40) {
+    return joinRawImageUrl('主角', '主角-百合21-40.png');
+  }
+  if (yuri <= 60) {
+    return joinRawImageUrl('主角', '主角-百合41-60.png');
+  }
+  if (yuri <= 70) {
+    return joinRawImageUrl('主角', '主角-百合61-70.png');
+  }
+  if (yuri <= 80) {
+    return joinRawImageUrl('主角', '主角-百合71-80.png');
+  }
+  if (yuri <= 90) {
+    return joinRawImageUrl('主角', '主角-百合81-90.png');
+  }
+  return joinRawImageUrl('主角', '主角-百合91-100.png');
 }
 
 export function createFallbackAvatar(label: string, theme: 'pink' | 'purple' = 'pink'): string {
@@ -129,3 +195,5 @@ export function useStatData<T>(selector: (statData: Record<string, any>) => T, i
 
   return value;
 }
+
+
