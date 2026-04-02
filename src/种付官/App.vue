@@ -184,12 +184,16 @@
                 >
                   <div class="flex items-start gap-4">
                     <div
-                      class="relative h-20 w-20 overflow-hidden rounded-xl border border-pink-400/50 md:h-24 md:w-24"
+                      v-if="selectedTarget.avatarUrl"
+                      class="relative h-20 w-20 cursor-zoom-in overflow-hidden rounded-xl border border-pink-400/50 transition hover:scale-[1.02] hover:border-pink-300/70 md:h-24 md:w-24"
+                      @click="openPreviewImage(selectedTarget.avatarUrl, selectedTarget.name)"
                     >
                       <img
+                        v-if="selectedTarget.avatarUrl"
                         :src="selectedTarget.avatarUrl"
                         :alt="selectedTarget.name"
                         class="h-full w-full object-cover"
+                        @error="hideTargetAvatar(selectedTarget)"
                       />
                       <div
                         class="absolute right-1 bottom-1 rounded-full bg-pink-500/80 px-2 py-0.5 text-[11px] text-white"
@@ -322,9 +326,16 @@
                   <button class="w-full text-left" @click="selectedTargetIndex = index">
                     <div class="flex items-center gap-4">
                       <div
+                        v-if="target.avatarUrl"
                         class="h-12 w-12 overflow-hidden rounded-lg border border-white/20 sm:h-14 sm:w-14 md:h-16 md:w-16"
                       >
-                        <img :src="target.avatarUrl" :alt="target.name" class="h-full w-full object-cover" />
+                        <img
+                          v-if="target.avatarUrl"
+                          :src="target.avatarUrl"
+                          :alt="target.name"
+                          class="h-full w-full object-cover"
+                          @error="hideTargetAvatar(target)"
+                        />
                       </div>
                       <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2">
@@ -511,6 +522,30 @@
       </div>
 
       <div
+        v-if="previewImageUrl"
+        class="absolute inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+        @click="closePreviewImage"
+      >
+        <button
+          class="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full border border-amber-100/35 bg-[#2b1025]/80 text-xl leading-none text-amber-50 transition hover:bg-[#3a1630]/90"
+          @click.stop="closePreviewImage"
+        >
+          ×
+        </button>
+        <div
+          class="max-h-full max-w-full overflow-hidden rounded-[1.6rem] border border-amber-100/35 bg-[#1a0914]/96 shadow-[0_24px_60px_rgba(0,0,0,0.55),0_0_32px_rgba(255,120,200,0.22)]"
+          @click.stop
+        >
+          <img
+            :src="previewImageUrl"
+            :alt="previewImageAlt"
+            class="block max-h-[85vh] max-w-[90vw] object-contain"
+            @error="closePreviewImage"
+          />
+        </div>
+      </div>
+
+      <div
         v-if="pendingDelete"
         class="absolute inset-0 z-50 flex items-center justify-center bg-black/55 p-3 backdrop-blur-sm"
       >
@@ -554,7 +589,7 @@
 <script setup lang="ts">
 import { useIntervalFn } from '@vueuse/core';
 import _ from 'lodash';
-import { computed, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { GameState, TargetProfile } from './types';
 
 type ThemeColor = {
@@ -610,6 +645,47 @@ const themeColor = ref<ThemeColor>(themeColors[0]);
 const statDataSnapshot = ref('');
 const statusNotice = ref<StatusNotice>({ text: '信号稳定', type: 'info' });
 const pendingDelete = ref<PendingDelete | null>(null);
+const previewImageUrl = ref<string | null>(null);
+const previewImageAlt = ref('');
+
+const TARGET_IMAGE_REPO_BASE =
+  'https://raw.githubusercontent.com/tramkiendinh03-create/ws1245/main/%E7%99%BE%E7%A0%B4';
+
+type TargetImageStage = '0' | '头像' | '1' | '2' | '3' | '4';
+
+type TargetImageConfig = {
+  folderName?: string;
+  fileBaseName?: string;
+  fileNames?: Partial<Record<TargetImageStage, string>>;
+};
+
+const TARGET_IMAGE_CONFIGS: Record<string, TargetImageConfig> = {
+  九条沙罗: {
+    fileNames: {
+      '1': '九条沙罗- 1.png',
+    },
+  },
+  塞西莉亚: {
+    fileNames: {
+      '1': '塞西莉亚-1 .png',
+    },
+  },
+  如月爱丽丝: {
+    fileNames: {
+      头像: '如月爱丽丝- 头像.png',
+      '1': '如月爱丽丝- 1.png',
+      '4': '如月爱丽丝- 4.png',
+    },
+  },
+  白石䌷: {
+    fileNames: {
+      '0': '白石䌷- (6).png',
+    },
+  },
+  皇都光子: {
+    fileBaseName: '皇都神奈',
+  },
+};
 
 function toStr(value: unknown, fallback = ''): string {
   if (_.isString(value)) return value;
@@ -624,7 +700,106 @@ function toNum(value: unknown, fallback = 0): number {
 
 function toBool(value: unknown, fallback = false): boolean {
   if (_.isBoolean(value)) return value;
+  if (_.isNumber(value)) return value !== 0;
+  if (_.isString(value)) {
+    const normalized = value.trim().toLowerCase();
+    if (['true', 'turn', 'yes', 'y', '1', 'on', 'pregnant'].includes(normalized)) return true;
+    if (['false', 'no', 'n', '0', 'off', 'none', 'null', ''].includes(normalized)) return false;
+  }
   return fallback;
+}
+
+function normalizeTargetName(name: string): string {
+  return name.trim();
+}
+
+function getSubmissionImageStage(submissionLevel: number, isPregnant: boolean): TargetImageStage {
+  const value = Math.max(-100, Math.min(100, submissionLevel));
+
+  if (isPregnant && value >= 90) return '4';
+  if (value <= -40) return '0';
+  if (value <= 20) return '头像';
+  if (value <= 40) return '1';
+  if (value <= 80) return '2';
+  return '3';
+}
+
+function buildDefaultTargetImageFileName(fileBaseName: string, stage: TargetImageStage): string {
+  return `${fileBaseName}-${stage}.png`;
+}
+
+function resolveTargetAvatarUrl(name: string, submissionLevel: number, isPregnant: boolean): string | undefined {
+  const normalizedName = normalizeTargetName(name);
+  if (!normalizedName) return undefined;
+
+  const config = TARGET_IMAGE_CONFIGS[normalizedName] ?? {};
+  const folderName = config.folderName ?? normalizedName;
+  const fileBaseName = config.fileBaseName ?? normalizedName;
+  const stage = getSubmissionImageStage(submissionLevel, isPregnant);
+  const fileName = config.fileNames?.[stage] ?? buildDefaultTargetImageFileName(fileBaseName, stage);
+
+  if (!fileName) return undefined;
+
+  return `${TARGET_IMAGE_REPO_BASE}/${encodeURIComponent(folderName)}/${encodeURIComponent(fileName)}`;
+}
+
+function hideTargetAvatar(target: TargetProfile): void {
+  target.avatarUrl = undefined;
+  if (previewImageUrl.value && previewImageAlt.value === target.name) {
+    closePreviewImage();
+  }
+}
+
+function openPreviewImage(url: string, alt: string): void {
+  previewImageUrl.value = url;
+  previewImageAlt.value = alt;
+}
+
+function closePreviewImage(): void {
+  previewImageUrl.value = null;
+  previewImageAlt.value = '';
+}
+
+function buildTargetRoots(raw: unknown): Record<string, unknown>[] {
+  const data = _.isObject(raw) ? (raw as Record<string, unknown>) : {};
+  return [
+    data,
+    _.get(data, '角色状态'),
+    _.get(data, '心理画像'),
+    _.get(data, '偏好信息'),
+    _.get(data, '关系信息'),
+    _.get(data, '当前状态'),
+    _.get(data, '状态'),
+  ].filter(_.isObject) as Record<string, unknown>[];
+}
+
+function pickTargetValue(raw: unknown, paths: string[], fallback: unknown = undefined): unknown {
+  for (const root of buildTargetRoots(raw)) {
+    const value = pickByPaths(root, paths);
+    if (!_.isNil(value)) return value;
+  }
+  return fallback;
+}
+
+function hydrateTargetProfile(name: string, raw: unknown): TargetProfile {
+  const baseProfile = toTargetProfile(name, raw);
+  const targetName = toStr(pickTargetValue(raw, ['name', '姓名'], baseProfile.name), baseProfile.name);
+  const submissionLevel = toNum(
+    pickTargetValue(raw, ['submissionLevel', '臣服度', '臣服值'], baseProfile.submissionLevel),
+    baseProfile.submissionLevel,
+  );
+  const isPregnant = toBool(
+    pickTargetValue(raw, ['isPregnant', '是否怀孕', '怀孕', '妊娠'], baseProfile.isPregnant),
+    baseProfile.isPregnant,
+  );
+
+  return {
+    ...baseProfile,
+    name: targetName,
+    submissionLevel,
+    isPregnant,
+    avatarUrl: resolveTargetAvatarUrl(targetName, submissionLevel, isPregnant),
+  };
 }
 
 function toStringArray(value: unknown): string[] {
@@ -798,10 +973,10 @@ function toTargetProfile(name: string, raw: unknown): TargetProfile {
 
 function parseTargets(raw: unknown): TargetProfile[] {
   if (_.isArray(raw)) {
-    return raw.map((item, index) => toTargetProfile(`目标${index + 1}`, item));
+    return raw.map((item, index) => hydrateTargetProfile(`目标${index + 1}`, item));
   }
   if (_.isObject(raw)) {
-    return Object.entries(raw as Record<string, unknown>).map(([name, data]) => toTargetProfile(name, data));
+    return Object.entries(raw as Record<string, unknown>).map(([name, data]) => hydrateTargetProfile(name, data));
   }
   return [];
 }
@@ -857,6 +1032,11 @@ function syncFromVariables() {
 const { pause: stopPolling } = useIntervalFn(syncFromVariables, 400, { immediate: true });
 
 let noticeTimer: ReturnType<typeof setTimeout> | null = null;
+const handleWindowKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && previewImageUrl.value) {
+    closePreviewImage();
+  }
+};
 
 function setStatusNotice(text: string, type: StatusNotice['type'] = 'info', duration = 2200) {
   statusNotice.value = { text, type };
@@ -867,8 +1047,13 @@ function setStatusNotice(text: string, type: StatusNotice['type'] = 'info', dura
   }, duration);
 }
 
+onMounted(() => {
+  window.addEventListener('keydown', handleWindowKeydown);
+});
+
 onUnmounted(() => {
   stopPolling();
+  window.removeEventListener('keydown', handleWindowKeydown);
   if (noticeTimer) {
     clearTimeout(noticeTimer);
     noticeTimer = null;
