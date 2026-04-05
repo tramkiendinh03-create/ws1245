@@ -1,5 +1,5 @@
 ﻿import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import { Droplets, Eye, Heart, Lock, Sparkles } from './icons';
 import { TattooMotif } from './TattooMotif';
@@ -166,38 +166,94 @@ export function TargetContent() {
   const targets = useStatData(buildTargets);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
+  const [isDraggingStrip, setIsDraggingStrip] = useState(false);
+  const stripRef = useRef<HTMLDivElement | null>(null);
+  const dragStateRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
 
   useEffect(() => {
     if (currentIndex >= targets.length) setCurrentIndex(0);
   }, [currentIndex, targets.length]);
+
+  const beginStripDrag = (clientX: number) => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    dragStateRef.current = { active: true, startX: clientX, scrollLeft: strip.scrollLeft, moved: false };
+    setIsDraggingStrip(true);
+  };
+
+  const moveStripDrag = (clientX: number) => {
+    const strip = stripRef.current;
+    const dragState = dragStateRef.current;
+    if (!strip || !dragState.active) return;
+
+    const deltaX = clientX - dragState.startX;
+    if (Math.abs(deltaX) > 4) {
+      dragState.moved = true;
+    }
+    strip.scrollLeft = dragState.scrollLeft - deltaX;
+  };
+
+  const endStripDrag = () => {
+    if (!dragStateRef.current.active) return;
+    dragStateRef.current.active = false;
+    setIsDraggingStrip(false);
+    window.setTimeout(() => {
+      dragStateRef.current.moved = false;
+    }, 0);
+  };
 
   const target = targets[currentIndex] ?? FALLBACK_TARGETS[0];
 
   return (
     <>
       <div className="flex flex-col gap-3 sm:gap-4 pr-1 pb-3 sm:pb-4">
-        <div className="flex gap-4 sm:gap-6 justify-center py-1 relative shrink-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-18 sm:w-24 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
-          {targets.map((t, idx) => (
-            <button
-              key={t.id}
-              onClick={() => setCurrentIndex(idx)}
-              className={`group relative w-11 h-11 sm:w-14 sm:h-14 rounded-full transition-all duration-500 z-10 ${currentIndex === idx ? 'scale-110 opacity-100' : 'opacity-55 hover:opacity-85 scale-90 hover:scale-100'}`}
-            >
-              <div className={`absolute -inset-4 rounded-full bg-gradient-to-br ${t.theme.avatarBg} blur-xl transition-opacity duration-500 ${currentIndex === idx ? 'opacity-42' : 'opacity-0 group-hover:opacity-22'}`}></div>
-              <div className="absolute inset-x-1.5 -top-1.5 h-2 rounded-full bg-white/14 blur-[2px]"></div>
-              <div className={`absolute inset-0 rounded-full bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,0.22),rgba(251,113,133,0.92),rgba(244,114,182,0.8),rgba(217,70,239,0.62),rgba(255,255,255,0.18))] p-[1.5px] ${currentIndex === idx ? t.theme.avatarShadow : ''}`}>
-                <div className="relative h-full w-full rounded-full bg-[linear-gradient(180deg,rgba(29,4,17,0.96),rgba(10,1,8,0.95))] p-[2px]">
-                  <div className="absolute inset-[2px] rounded-full border border-white/16"></div>
-                  <div className="absolute inset-[5px] rounded-full border border-pink-100/10"></div>
-                  <div className="absolute inset-x-2 top-1 h-2 rounded-full bg-white/16 blur-[2px]"></div>
-                  <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0005] ring-1 ring-white/8">
-                    <AvatarImage src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+        <div className="relative shrink-0">
+          <div className="pointer-events-none absolute top-1/2 left-3 right-3 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
+          <div
+            ref={stripRef}
+            className={`relative z-10 flex gap-3 sm:gap-4 overflow-x-auto overflow-y-hidden px-2 py-2 sm:px-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isDraggingStrip ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+            onMouseDown={event => {
+              if (event.button !== 0) return;
+              beginStripDrag(event.clientX);
+            }}
+            onMouseMove={event => {
+              if (!dragStateRef.current.active) return;
+              event.preventDefault();
+              moveStripDrag(event.clientX);
+            }}
+            onMouseLeave={endStripDrag}
+            onMouseUp={endStripDrag}
+          >
+            {targets.map((t, idx) => (
+              <button
+                key={t.id}
+                type="button"
+                onDragStart={event => event.preventDefault()}
+                onClick={event => {
+                  if (dragStateRef.current.moved) {
+                    event.preventDefault();
+                    return;
+                  }
+                  setCurrentIndex(idx);
+                }}
+                className={`group relative h-11 w-11 shrink-0 sm:h-14 sm:w-14 rounded-full transition-all duration-500 ${currentIndex === idx ? 'scale-110 opacity-100' : 'opacity-55 hover:opacity-85 scale-90 hover:scale-100'}`}
+              >
+                <div className={`absolute -inset-4 rounded-full bg-gradient-to-br ${t.theme.avatarBg} blur-xl transition-opacity duration-500 ${currentIndex === idx ? 'opacity-42' : 'opacity-0 group-hover:opacity-22'}`}></div>
+                <div className="absolute inset-x-1.5 -top-1.5 h-2 rounded-full bg-white/14 blur-[2px]"></div>
+                <div className={`absolute inset-0 rounded-full bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,0.22),rgba(251,113,133,0.92),rgba(244,114,182,0.8),rgba(217,70,239,0.62),rgba(255,255,255,0.18))] p-[1.5px] ${currentIndex === idx ? t.theme.avatarShadow : ''}`}>
+                  <div className="relative h-full w-full rounded-full bg-[linear-gradient(180deg,rgba(29,4,17,0.96),rgba(10,1,8,0.95))] p-[2px]">
+                    <div className="absolute inset-[2px] rounded-full border border-white/16"></div>
+                    <div className="absolute inset-[5px] rounded-full border border-pink-100/10"></div>
+                    <div className="absolute inset-x-2 top-1 h-2 rounded-full bg-white/16 blur-[2px]"></div>
+                    <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0005] ring-1 ring-white/8">
+                      <AvatarImage src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+            <div className="shrink-0 pr-1 sm:pr-2" aria-hidden="true"></div>
+          </div>
         </div>
 
         <div className={`bg-[#0a0005]/80 backdrop-blur-2xl border border-white/5 ${target.theme.panelBorder} rounded-xl sm:rounded-2xl p-4 sm:p-6 ${target.theme.panelShadow} relative overflow-hidden transition-all duration-700 group flex flex-col shrink-0`}>
@@ -279,3 +335,6 @@ function ProgressBar({ icon, label, value, color, glowColor }: { icon: ReactNode
     </div>
   );
 }
+
+
+
